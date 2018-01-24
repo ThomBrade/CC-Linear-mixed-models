@@ -104,23 +104,26 @@ mountain.lm <- lm(testScore ~ bodyLength2 + mountainRange, data = dragons)
 summary(mountain.lm)
 
 ## now body length is not significant
+-------------------------------------------------------------------------------------------
+###----- Mixed effects models -----###-----------------------------------------------------
+-------------------------------------------------------------------------------------------
+library(lme4)
 
-
-###----- Mixed effects models -----###
-
-
-
+---------------------------------
 ##----- First mixed model -----##
-
+---------------------------------
 ### model
-
+mixed.lmer <- lmer(testScore ~ bodyLength2 + (1|mountainRange), data = dragons)
 ### plots
-
+#par(mfrow=c(1,3))
+par(mfrow=c(1,1))
+plot(mixed.lmer)
+qqnorm(resid(mixed.lmer))
+qqline(resid(mixed.lmer))
 ### summary
-
+summary(mixed.lmer)
 ### variance accounted for by mountain ranges
-
-
+339.7/(339.7 + 223.8) #60% after accounting for variation due to fixed affect
 
 ##-- implicit vs explicit nesting --##
 
@@ -128,17 +131,23 @@ head(dragons)  # we have site and mountainRange
 str(dragons)  # we took samples from three sites per mountain range and eight mountain ranges in total
 
 ### create new "sample" variable
-
+dragons <- within(dragons, sample <- factor(mountainRange:site))
 
 ##----- Second mixed model -----##
-
+mixed.WRONG <- lmer(testScore ~ bodyLength2 + (1|mountainRange) + (1|site), data = dragons)  # treats the two random effects as if they are crossed
 ### model
-
+mixed.lmer2 <- lmer(testScore ~ bodyLength2 + (1|mountainRange) + (1|sample), data = dragons)
 ### summary
 
 ### plot
-
-
+ggplot(dragons, aes(x = bodyLength, y = testScore, colour = site)) +
+  facet_wrap(~mountainRange, nrow=2) +
+  geom_point() +
+  theme_classic() +
+  geom_line(data = cbind(dragons, pred = predict(mixed.lmer2)), aes(y = pred)) +
+  theme(legend.position = "none")+
+  #theme(plot.margin = unit(c(1,1,1,1),"cm"))+
+  #theme(plot.)
 
 ##----- Model selection for the keen -----##
 
