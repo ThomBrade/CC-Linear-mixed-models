@@ -4,6 +4,10 @@
 #                                    #
 ######################################
 
+# This is just a comment to practice comitting to github
+
+
+
 ## authors: Gabriela K Hajduk, based on workshop developed by Liam Bailey
 ## contact details: gkhajduk.github.io; email: gkhajduk@gmail.com
 ## date: 2017-03-09
